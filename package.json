@@ -21,8 +21,8 @@
   "license": "MIT",
   "homepage": "https://github.com/manubb/Leaflet.PixiOverlay#readme",
   "peerDependencies": {
-    "leaflet": ">=0.7",
-    "pixi.js": ">=4.6"
+    "leaflet": "^1.9.4",
+    "pixi.js": "8.5.2"
   },
   "devDependencies": {
     "barbiche": "^3.0.10",
@@ -34,10 +34,10 @@
     "d3-scale": "^4.0.2",
     "graph-draw": "^2.0.3",
     "jshint": "^2.12.0",
-    "leaflet": "^1.7.1",
+    "leaflet": "^1.9.4",
     "leaflet-hash": "^0.2.1",
     "leaflet.photon": "^0.8.0",
-    "pixi.js": "^7.1.2",
+    "pixi.js": "8.5.2",
     "pixi.js.legacy": "npm:pixi.js@^4.8.9",
     "rbush": "^3.0.1",
     "template-mb": "^2.0.6",
