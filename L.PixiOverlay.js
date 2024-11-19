@@ -99,7 +99,7 @@
 				this._rendererOptions.backgroundAlpha = 0;
 			}
 
-			this._doubleBuffering = PIXI.utils.isWebGLSupported() && !this.options.forceCanvas &&
+			this._doubleBuffering = PIXI.isWebGLSupported() && !this.options.forceCanvas &&
 				this.options.doubleBuffering;
 		},
 
@@ -113,32 +113,37 @@
 
 		_setEvents: function () { },
 
-		onAdd: function (targetMap) {
+		// @PIXI8 async...
+		onAdd: async function (targetMap) {
 			this._setMap(targetMap);
 			if (!this._container) {
 				var container = this._container = L.DomUtil.create('div', 'leaflet-pixi-overlay');
 				container.style.position = 'absolute';
-				this._renderer = PIXI.autoDetectRenderer(this._rendererOptions);
+				// @PIXI8 await
+				this._renderer = await PIXI.autoDetectRenderer(this._rendererOptions);
 				setEventSystem(
 					this._renderer,
 					this.options.destroyInteractionManager,
 					this.options.autoPreventDefault
 				);
-				container.appendChild(this._renderer.view);
+				// @PIXI8 View replaced by canvas
+				container.appendChild(this._renderer.view.canvas);
 				if (this._zoomAnimated) {
 					L.DomUtil.addClass(container, 'leaflet-zoom-animated');
 					this._setContainerStyle();
 				}
 				if (this._doubleBuffering) {
-					this._auxRenderer = PIXI.autoDetectRenderer(this._rendererOptions);
+					// @PIXI8 await
+					this._auxRenderer = await PIXI.autoDetectRenderer(this._rendererOptions);
 					setEventSystem(
 						this._auxRenderer,
 						this.options.destroyInteractionManager,
 						this.options.autoPreventDefault
 					);
 					container.appendChild(this._auxRenderer.view);
-					this._renderer.view.style.position = 'absolute';
-					this._auxRenderer.view.style.position = 'absolute';
+					// @PIXI8
+					this._renderer.view.canvas.style.position = 'absolute';
+					this._auxRenderer.view.canvas.style.position = 'absolute';
 				}
 			}
 			this._addContainer();
@@ -253,8 +258,8 @@
 				this._renderer = this._auxRenderer;
 				this._auxRenderer = currentRenderer;
 			}
-
-			var view = this._renderer.view;
+			// @PIXI8
+			var view = this._renderer.view.canvas;
 			var b = this._bounds,
 				container = this._container,
 				size = b.getSize();
@@ -267,8 +272,8 @@
 					}
 				}
 				this._renderer.resize(size.x, size.y);
-				view.style.width = size.x + 'px';
-				view.style.height = size.y + 'px';
+				view.width = size.x + 'px';
+				view.height = size.y + 'px';
 				if (this._renderer.gl) {
 					var gl = this._renderer.gl;
 					if (gl.drawingBufferWidth !== this._renderer.width) {
@@ -289,7 +294,8 @@
 					self._redraw(b.min, e);
 					self._renderer.gl.finish();
 					view.style.visibility = 'visible';
-					self._auxRenderer.view.style.visibility = 'hidden';
+					// @PIXI8
+					self._auxRenderer.view.canvas.style.visibility = 'hidden';
 					L.DomUtil.setPosition(container, b.min);
 				});
 			} else {
